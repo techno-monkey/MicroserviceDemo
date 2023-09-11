@@ -1,0 +1,16 @@
+version: '3.4'
+
+services:
+  ingress:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+
+  catalogservice-clusterip-serv:
+    image: nikkuaryan/catalogservice:latest
+    ports:
+      - "81:80"
+    environment:
+      - VIRTUAL_HOST=demo.acme.com

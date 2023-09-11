@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogservice
+  template:
+    metadata:
+      labels:
+        app: catalogservice
+    spec:
+      containers:
+      - image: demopurucr.azurecr.io/catalogservice:latest 
+        name: catalogservice
+        ports:
+        - containerPort: 80
+          name: catalogservice
+      
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogservice-clusterip-serv
+  labels:
+        app: catalogservice
+spec:  
+  selector:
+    app: catalogservice
+  ports:
+    - name: catalogservice
+      protocol: TCP
+      port: 80
+  type: ClusterIP

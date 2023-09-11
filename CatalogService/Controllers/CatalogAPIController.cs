@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CatalogService.Database;
+using AutoMapper;
+using CatalogService.Services;
 
 namespace CatalogService.Controllers
 {
@@ -14,10 +16,12 @@ namespace CatalogService.Controllers
     public class CatalogAPIController : ControllerBase
     {
         private readonly DatabaseContext _context;
+        private readonly ICommunicationDataClient _dataClient;
 
-        public CatalogAPIController(DatabaseContext context)
+        public CatalogAPIController(DatabaseContext context, ICommunicationDataClient dataClient)
         {
             _context = context;
+            _dataClient = dataClient;
         }
 
         // GET: api/CatalogAPI
@@ -56,7 +60,7 @@ namespace CatalogService.Controllers
             {
                 return NotFound();
             }
-            
+
             var category = _context.Category.FromSqlInterpolated($"SELECT * FROM dbo.Category WHERE Name = {name}").SingleOrDefault();
 
             if (category == null)
@@ -103,12 +107,23 @@ namespace CatalogService.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
+           
+
             if (_context.Category == null)
             {
                 return Problem("Entity set 'DatabaseContext.Category'  is null.");
             }
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
+            try
+            {
+                await _dataClient.SendCategoryToCommunication(new CategoryDto { CategoryId = category.CategoryId, Name = category.Name });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed: {ex.Message}");
+            }
+            Console.WriteLine($"Success");
 
             return CreatedAtAction("GetCategory", new { id = category.CategoryId }, category);
         }

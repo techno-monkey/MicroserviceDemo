@@ -2,11 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: productservice
-spec:
+spec:  
   selector:
     app: productservice
   ports:
-    - protocol: TCP
+    - name: productservice
+      protocol: TCP
       port: 80
       targetPort: 80
-  type: LoadBalancer
+  type: NodePort

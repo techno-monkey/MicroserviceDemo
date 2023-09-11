@@ -16,5 +16,11 @@ namespace CatalogService.Database
         public String Name { get; set; }
     }
 
-   
+
+    public class CategoryDto
+    {
+        public int CategoryId { get; set; }
+        public String Name { get; set; }
+    }
+
 }

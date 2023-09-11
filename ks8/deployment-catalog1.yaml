@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: catalogservice
+  labels:
+    app: catalogservice
+    type: frontend-app
+spec:
+  containers:
+  - image: nikkuaryan/catalogservice:latest 
+    name: catalogservice 
+        
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogservice-clusterip-serv
+spec:  
+  selector:
+    name: catalogservice
+    type: frontend-app
+  ports:
+     - targerPort: 80
+       port: 80
+       protocol: TCP
+  type: ClusterIP

@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: productservice
 spec:
+  replicas: 1
   selector:
     matchLabels:
       app: productservice
@@ -12,8 +13,5 @@ spec:
         app: productservice
     spec:
       containers:
-      - image: demomicroservice.azurecr.io/productservice:latest 
-        name: productservice        
-        ports:
-        - containerPort: 80
-          name: productservice
+      - image: nikkuaryan/productservice:latest 
+        name: productservice   

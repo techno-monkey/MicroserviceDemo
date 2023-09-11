@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: communicationservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: communicationservice
+  template:
+    metadata:
+      labels:
+        app: communicationservice
+    spec:
+      containers:
+      - image: nikkuaryan/communicationservice:latest 
+        name: communicationservice   
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: communicationservice-clusterip-serv
+spec:  
+  selector:
+    app: communicationservice
+  ports:
+    - name: communicationservice
+      protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP

@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-srv
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: demo.acme.com
+      http:
+        paths:
+          - path: /api/catalogapi
+            pathType: Prefix
+            backend:
+              service:
+                name: catalogservice-clusterip-serv
+                port:
+                  number: 80  

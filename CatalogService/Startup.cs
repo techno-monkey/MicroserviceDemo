@@ -1,5 +1,8 @@
 using CatalogService.Database;
+using CatalogService.Models;
+using CatalogService.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 namespace CatalogService
@@ -16,10 +19,17 @@ namespace CatalogService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddOption<AppOptions>();
             services.AddDbContext<DatabaseContext>(options =>
             {
                 var dbString = Configuration.GetConnectionString("myConnectionString");
                 options.UseSqlServer(dbString);
+            });
+
+            services.AddHttpClient<ICommunicationDataClient, HttpCommunicationDataClient>((serviceProvider, client) =>
+            {
+                var appOptions = serviceProvider.GetRequiredService<IOptions<AppOptions>>().Value;
+                client.BaseAddress = new Uri(appOptions.Url);
             });
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -34,7 +44,7 @@ namespace CatalogService
 
         }
 
-        
+
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -44,13 +54,13 @@ namespace CatalogService
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v3/swagger.json", "CatalogService v1"));
             }
-            
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthorization();
-           
+
 
             app.UseEndpoints(endpoints =>
             {
@@ -59,6 +69,6 @@ namespace CatalogService
         }
     }
 
-   
+
 
 }
