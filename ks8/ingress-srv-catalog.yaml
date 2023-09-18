@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalogservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: catalogservice
+  template:
+    metadata:
+      labels:
+        app: catalogservice
+    spec:
+      containers:
+      - image: nikkuaryan/catalogservice:latest 
+        name: catalogservice
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: catalogservice
+spec:
+  selector:
+    app: catalogservice
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: catalogservice
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: demo.acme.com 
+    http:
+      paths:
+      - path: /api/catalogapi
+        backend:
+          service:
+            name: catalogservice
+            port:
+              number: 80
+        pathType: Exact
+      - path: /api/CommunicationAPI
+        backend:
+          service:
+            name: communicationservice-clusterip-serv
+            port:
+              number: 80
+        pathType: Exact

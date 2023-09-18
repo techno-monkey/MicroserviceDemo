@@ -1,4 +1,5 @@
 using CatalogService.Database;
+using CatalogService.MessageBusServices;
 using CatalogService.Models;
 using CatalogService.Services;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,9 @@ namespace CatalogService
                 var appOptions = serviceProvider.GetRequiredService<IOptions<AppOptions>>().Value;
                 client.BaseAddress = new Uri(appOptions.Url);
             });
+
+            services.AddSingleton<IMessageBusClient, MessageBusClient>();
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             { //<-- NOTE 'Add' instead of 'Configure'

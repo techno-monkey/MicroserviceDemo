@@ -23,4 +23,13 @@ namespace CatalogService.Database
         public String Name { get; set; }
     }
 
+    public class CategoryPublishDto
+    {
+        public int id { get; set; }
+        public string Name { get; set; }
+
+        public string Event { get; set; }
+    }
+
+
 }

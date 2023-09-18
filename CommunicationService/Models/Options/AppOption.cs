@@ -1,5 +1,6 @@
-﻿namespace CatalogService.Models
+﻿namespace CommunicationService.Models.Options
 {
+
     public abstract class OptionBase
     {
         public abstract string OptionsName { get; }
@@ -17,11 +18,10 @@
         }
     }
 
-    public class AppOptions : OptionBase
+    public class AppOption: OptionBase
     {
-        public override string OptionsName => "AppOptions";
+        public override string OptionsName => "AppOption";
         public string Url { get; set; }
-
         public string RabbitMQHost { get; set; }
 
         public string RabbitMQPort { get; set; }

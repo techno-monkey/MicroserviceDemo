@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using CatalogService.Database;
 using AutoMapper;
 using CatalogService.Services;
+using CatalogService.MessageBusServices;
 
 namespace CatalogService.Controllers
 {
@@ -17,11 +18,13 @@ namespace CatalogService.Controllers
     {
         private readonly DatabaseContext _context;
         private readonly ICommunicationDataClient _dataClient;
+        private readonly IMessageBusClient _busCLient;
 
-        public CatalogAPIController(DatabaseContext context, ICommunicationDataClient dataClient)
+        public CatalogAPIController(DatabaseContext context, ICommunicationDataClient dataClient, IMessageBusClient busClient)
         {
             _context = context;
             _dataClient = dataClient;
+            _busCLient = busClient;
         }
 
         // GET: api/CatalogAPI
@@ -107,7 +110,7 @@ namespace CatalogService.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> PostCategory(Category category)
         {
-           
+
 
             if (_context.Category == null)
             {
@@ -117,7 +120,16 @@ namespace CatalogService.Controllers
             await _context.SaveChangesAsync();
             try
             {
-                await _dataClient.SendCategoryToCommunication(new CategoryDto { CategoryId = category.CategoryId, Name = category.Name });
+                //await _dataClient.SendCategoryToCommunication(new CategoryDto { CategoryId = category.CategoryId, Name = category.Name });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed: {ex.Message}");
+            }
+
+            try
+            {
+                _busCLient.Publish(new CategoryPublishDto { id = category.CategoryId, Name = category.Name, Event="CategoryPublish" });
             }
             catch (Exception ex)
             {
