@@ -1,0 +1,22 @@
+AKS
+ 1. Plateform to manage container-based application
+ 2. AKS provides decrative deployment approach
+ 3. It supports stateful and statelss application (need to check stateful and statelss in .net core)
+ 4. Kubernatese cluster is devided into 2 part
+	a. COntrol panel : WHile create AKS cluster, it automatically created and configured. 
+		It has 4 components:
+		i. 	kube-apiserver: 	the API server is how underlaying AKS APIs are exposed.
+		ii. etcd: 				maintain the state of aks cluster and configuration. It is also keyvault of AKS
+		iii.Kube-scheduler: 	while creating or scalling applications, scheduler determins what nodes can run the workload and starts them.
+		iv. kube-controller-manager: controller-manager oversees a number of smaller controller and perform action such as replica and handelling nodes
+	b. Nodes : To run application and services, we need AKS Nodes.
+		It has 3 major components
+		i. kubelet: 			it is an agent that process the orchestrated request from control panel along with scheduling and run the requested container.
+		ii. kube-proxy: 		handels VN on each nodes. It manages engess/egress traffic and manages IP addressing for service and pods
+		iii. container runtime: Allows containerized application to run and intract with additional resources(DB, Azure files, Disks). such as VN and storage. RIght now AKS cluster using kubernates 1.19 version.  
+ 5. Kubernetes has prescribed three important tenets that any container runtime should adhere to. These are as follows:
+	a. Pods should be able to communicate with other Pods without any transformation in their source or destination addresses, something that is performed using network address  	
+	   translation (NAT).
+	b. Agents such as kubelets should be able to communicate with Pods directly on the nodes.
+	c. Pods that are directly hosted on the host network still should be able to communicate with all Pods in the cluster.
+
