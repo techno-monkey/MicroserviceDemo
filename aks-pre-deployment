@@ -1,0 +1,15 @@
+Create windows admin user/password 
+
+$AdminCreds = Get-Credential -Message 'Please create the administrator credentials for your Windows Server containers'
+Echo $AdminCreds
+
+crate AKS
+
+az aks create --resource-group demo-puru-common-rg --name myAKSCluster --node-count 2 --enable-addons monitoring --generate-ssh-keys --windows-admin-username $AdminCreds.UserName  --windows-admin-password $AdminCreds.Password --vm-set-type VirtualMachineScaleSets --network-plugin azure
+
+Add Windows Node pool
+
+az aks nodepool add --resource-group demo-puru-common-rg --cluster-name myAKSCluster --os-type Windows --name npwin --node-count 1
+
+Connect to the cluster
+az aks get-credentials --resource-group demo-puru-common-rg --name myAKSCluster
