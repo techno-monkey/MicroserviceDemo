@@ -22,6 +22,7 @@ namespace CommunicationService.Events
             _appOption = options.Value;
             _eventProcessor = eventProcessor;
             IntializeRabbitMQ();
+            
         }
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -50,10 +51,14 @@ namespace CommunicationService.Events
             Console.WriteLine("Listening to Msg Bus");
             _connection.ConnectionShutdown += RabbitMQ_CloseConnection;
         }
+
+       
         private void RabbitMQ_CloseConnection(object? sender, ShutdownEventArgs e)
         {
             Console.WriteLine("Shutting Down Service Bus");
         }
+
+      
 
         public void Dispose()
         {

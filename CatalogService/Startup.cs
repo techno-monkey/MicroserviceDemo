@@ -1,7 +1,7 @@
 using CatalogService.Database;
-using CatalogService.MessageBusServices;
 using CatalogService.Models;
-using CatalogService.Services;
+using Common.MessageBusServices;
+using Common.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -27,13 +27,12 @@ namespace CatalogService
                 options.UseSqlServer(dbString);
             });
 
-            services.AddHttpClient<ICommunicationDataClient, HttpCommunicationDataClient>((serviceProvider, client) =>
-            {
-                var appOptions = serviceProvider.GetRequiredService<IOptions<AppOptions>>().Value;
-                client.BaseAddress = new Uri(appOptions.Url);
+            
+            //services.AddSingleton<IMessageBusClient, MessageBusClient>();
+            services.AddSingleton<IAzureBusService, AzureBusService>((serviceProvider) => {
+                var option = serviceProvider.GetService<IOptions<AppOptions>>().Value;
+                return new AzureBusService(option.ServiceBusConnectionString, option.ServiceBusQueueName);
             });
-
-            services.AddSingleton<IMessageBusClient, MessageBusClient>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>

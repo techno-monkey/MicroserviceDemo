@@ -25,5 +25,7 @@
         public string RabbitMQHost { get; set; }
 
         public string RabbitMQPort { get; set; }
+        public string ServiceBusConnectionString { get; set; }
+        public string ServiceBusQueueName { get; set; }
     }
 }

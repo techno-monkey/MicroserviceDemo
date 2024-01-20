@@ -56,3 +56,30 @@ spec:
             port:
               number: 80
         pathType: Exact
+
+---
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myingress
+spec:
+  ingressClassName: azure-application-gateway
+  rules:
+  - http:
+      paths:
+      - path: /api/catalogapi
+        backend:
+          service:
+            name: catalogservice
+            port:
+              number: 80
+        pathType: Exact
+      - path: /api/CommunicationAPI
+        backend:
+          service:
+            name: communicationservice-clusterip-serv
+            port:
+              number: 80
+        pathType: Exact

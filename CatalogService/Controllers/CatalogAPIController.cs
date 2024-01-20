@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using CatalogService.Database;
+using CatalogService.Services;
+using Common.MessageBusServices;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using CatalogService.Database;
-using AutoMapper;
-using CatalogService.Services;
-using CatalogService.MessageBusServices;
+using Newtonsoft.Json;
 
 namespace CatalogService.Controllers
 {
@@ -18,13 +13,20 @@ namespace CatalogService.Controllers
     {
         private readonly DatabaseContext _context;
         private readonly ICommunicationDataClient _dataClient;
-        private readonly IMessageBusClient _busCLient;
+        //private readonly IMessageBusClient _busCLient;
+        private readonly IAzureBusService _busClient;
 
-        public CatalogAPIController(DatabaseContext context, ICommunicationDataClient dataClient, IMessageBusClient busClient)
+        //public CatalogAPIController(DatabaseContext context, ICommunicationDataClient dataClient, IMessageBusClient busClient)
+        //{
+        //    _context = context;
+        //    _dataClient = dataClient;
+        //    _busCLient = busClient;
+        //}
+
+        public CatalogAPIController(DatabaseContext context, IAzureBusService busClient)
         {
             _context = context;
-            _dataClient = dataClient;
-            _busCLient = busClient;
+            _busClient = busClient;
         }
 
         // GET: api/CatalogAPI
@@ -118,18 +120,11 @@ namespace CatalogService.Controllers
             }
             _context.Category.Add(category);
             await _context.SaveChangesAsync();
+           
             try
             {
-                //await _dataClient.SendCategoryToCommunication(new CategoryDto { CategoryId = category.CategoryId, Name = category.Name });
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Failed: {ex.Message}");
-            }
-
-            try
-            {
-                _busCLient.Publish(new CategoryPublishDto { id = category.CategoryId, Name = category.Name, Event="CategoryPublish" });
+                await _busClient.SendMessageAsync(JsonConvert.SerializeObject(new CategoryPublishDto
+                { id = category.CategoryId, Name = category.Name, Event = "CategoryPublish" }));
             }
             catch (Exception ex)
             {

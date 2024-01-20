@@ -22,7 +22,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllers();
 
 builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
-builder.Services.AddHostedService<SubscriberController>();
+builder.Services.AddHostedService<SubscriberServiceBusController>();
 
 var app = builder.Build();
 
